@@ -77,11 +77,7 @@ if (config.cookies) {
     });
 }
 
-if (config.resourceTimeoutMs) {
-    page.settings.resourceTimeout = 10000;
-} else {
-    page.settings.resourceTimeout = config.resourceTimeoutMs;
-}
+page.settings.resourceTimeout = config.resourceTimeoutMs || 10000;
 
 
 // Do not load Google Analytics URLs. We don't want to pollute stats.
@@ -170,7 +166,7 @@ page.onResourceTimeout = function(request) {
 
 
 // Detect if any resources fail to load.
-page.OnResourceError = function(error) {
+page.onResourceError = function(error) {
     var url = error.url;
     console.log('Loading resource errored: ' + url +
                 ', errorCode=' + error.errorCode +
@@ -223,7 +219,7 @@ page.onLoadFinished = function(status) {
     if (status == 'success') {
         console.log('Loaded the page successfully');
     } else {
-        console.log('Loading the page failed');
+        console.log('Loading the page failed', status);
         phantom.exit(1);
     }
 };
@@ -313,6 +309,7 @@ page.waitForReady = function(func) {
 
 
 // Kickoff the load!
+console.log('Opening page', config.targetUrl);
 page.open(config.targetUrl, function(status) {
     console.log('Finished loading page:', config.targetUrl,
                 'w/ status:', status);
